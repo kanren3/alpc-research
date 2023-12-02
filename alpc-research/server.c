@@ -179,9 +179,9 @@ SrvServerWorker (
 {
     NTSTATUS Status;
     ULONG MessageAttributesMask;
-    ULONG MessageAttributesSize;
+    SIZE_T MessageAttributesSize;
     PALPC_MESSAGE_ATTRIBUTES MessageAttributes;
-    ULONG RequiredBufferSize;
+    SIZE_T RequiredBufferSize;
     PPORT_MESSAGE PortMessage;
     SIZE_T BufferLength;
 

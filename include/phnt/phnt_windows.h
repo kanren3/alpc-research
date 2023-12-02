@@ -19,6 +19,10 @@
 #endif
 #endif
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #ifndef INT_ERROR
 #define INT_ERROR (-1)
 #endif
@@ -63,7 +67,7 @@
 #undef WIN32_NO_STATUS
 #include <ntstatus.h>
 #include <winioctl.h>
-#include <wmistr.h>
+#include <evntrace.h>
 
 typedef double DOUBLE;
 typedef GUID *PGUID;
