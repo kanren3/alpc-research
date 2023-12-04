@@ -2690,7 +2690,8 @@ PssNtCaptureSnapshot(
 #define MEMORY_BULK_INFORMATION_FLAG_BASIC 0x00000001
 
 // rev
-typedef struct _NTPSS_MEMORY_BULK_INFORMATION {
+typedef struct _NTPSS_MEMORY_BULK_INFORMATION
+{
     ULONG QueryFlags;
     ULONG NumberOfEntries;
     PVOID NextValidAddress;
