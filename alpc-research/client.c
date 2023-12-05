@@ -1,6 +1,7 @@
 #include <ntum.h>
 #include "runtime.h"
 #include "client.h"
+#include <stdio.h>
 
 VOID NTAPI
 CliInitializePortAttributes (
@@ -64,7 +65,7 @@ CliTestDatagram (
     CliInitializePortAttributes(&PortAttributes);
     CliInitializePortMessage(PortMessage, NULL, 0);
 
-    BufferLength = PortMessage->u1.s1.TotalLength;
+    BufferLength = ALPC_MAX_MESSAGE_LENGTH;
 
     Status = NtAlpcConnectPort(&CommunicationPortHandle,
                                &PortNameString,
@@ -82,8 +83,8 @@ CliTestDatagram (
         RtFreeHeap(PortMessage);
         return Status;
     }
- 
-    while (Counter.QuadPart < 20000000) {
+
+    while (Counter.QuadPart < 10000000) {
         CliInitializePortMessage(PortMessage, &Counter, sizeof(Counter));
  
         Status = NtAlpcSendWaitReceivePort(CommunicationPortHandle,
@@ -98,8 +99,78 @@ CliTestDatagram (
         Counter.QuadPart += 1;
     }
 
-    DelayInterval.QuadPart = Int32x32To64(60000, -10 * 1000);
+    DelayInterval.QuadPart = Int32x32To64(15000, -10 * 1000);
     NtDelayExecution(FALSE, &DelayInterval);
+
+    NtClose(CommunicationPortHandle);
+    RtFreeHeap(PortMessage);
+
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS NTAPI
+CliTestSyncRequest (
+    IN LPCWSTR PortName
+)
+{
+    NTSTATUS Status;
+    UNICODE_STRING PortNameString;
+    HANDLE CommunicationPortHandle;
+    PPORT_MESSAGE PortMessage;
+    LARGE_INTEGER DelayInterval;
+    ALPC_PORT_ATTRIBUTES PortAttributes;
+    SIZE_T BufferLength;
+    LARGE_INTEGER Counter = { 0 };
+
+    DelayInterval.QuadPart = Int32x32To64(1000, -10 * 1000);
+    NtDelayExecution(FALSE, &DelayInterval);
+
+    PortMessage = RtAllocateZeroHeap(ALPC_MAX_MESSAGE_LENGTH);
+
+    if (NULL == PortMessage) {
+        return STATUS_INSUFFICIENT_RESOURCES;
+    }
+
+    RtlInitUnicodeString(&PortNameString, PortName);
+
+    CliInitializePortAttributes(&PortAttributes);
+    CliInitializePortMessage(PortMessage, NULL, 0);
+
+    BufferLength = ALPC_MAX_MESSAGE_LENGTH;
+
+    Status = NtAlpcConnectPort(&CommunicationPortHandle,
+                               &PortNameString,
+                               NULL,
+                               &PortAttributes,
+                               ALPC_MSGFLG_SYNC_REQUEST,
+                               NULL,
+                               PortMessage,
+                               &BufferLength,
+                               NULL,
+                               NULL,
+                               NULL);
+
+    if (FALSE == NT_SUCCESS(Status)) {
+        RtFreeHeap(PortMessage);
+        return Status;
+    }
+
+    while (Counter.QuadPart < 10000000) {
+        CliInitializePortMessage(PortMessage, &Counter, sizeof(Counter));
+
+        BufferLength = ALPC_MAX_MESSAGE_LENGTH;
+
+        Status = NtAlpcSendWaitReceivePort(CommunicationPortHandle,
+                                           ALPC_MSGFLG_SYNC_REQUEST,
+                                           PortMessage,
+                                           NULL,
+                                           PortMessage,
+                                           &BufferLength,
+                                           NULL,
+                                           NULL);
+
+        Counter.QuadPart += 1;
+    }
 
     NtClose(CommunicationPortHandle);
     RtFreeHeap(PortMessage);

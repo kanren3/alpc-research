@@ -40,6 +40,39 @@ SrvInitializePortMessage (
 }
 
 NTSTATUS NTAPI
+OnAlpcRequest (
+    IN HANDLE ConnectionPortHandle,
+    IN PPORT_MESSAGE PortMessage,
+    IN PALPC_MESSAGE_ATTRIBUTES MessageAttributes
+)
+{
+    NTSTATUS Status;
+    PVOID ContentBuffer;
+    CSHORT ContentLength;
+    PLARGE_INTEGER Counter;
+
+    ContentBuffer = PortMessage + 1;
+    ContentLength = PortMessage->u1.s1.DataLength;
+
+    Counter = ContentBuffer;
+
+    if (0 == (Counter->QuadPart % 1000000)) {
+        printf("Request Receive Counter %lld.\n", Counter->QuadPart);
+    }
+
+    Status = NtAlpcSendWaitReceivePort(ConnectionPortHandle,
+                                       ALPC_MSGFLG_RELEASE_MESSAGE,
+                                       PortMessage,
+                                       NULL,
+                                       NULL,
+                                       NULL,
+                                       NULL,
+                                       NULL);
+
+    return Status;
+}
+
+NTSTATUS NTAPI
 OnAlpcDatagram (
     IN HANDLE ConnectionPortHandle,
     IN PPORT_MESSAGE PortMessage,
@@ -55,8 +88,8 @@ OnAlpcDatagram (
 
     Counter = ContentBuffer;
 
-    if (0 == (Counter->QuadPart % 10000)) {
-        printf("Receive Counter %lld.\n", Counter->QuadPart);
+    if (0 == (Counter->QuadPart % 1000000)) {
+        printf("Datagram Receive Counter %lld.\n", Counter->QuadPart);
     }
 
     return STATUS_SUCCESS;
@@ -152,6 +185,9 @@ SrvProcessMessage (
     NTSTATUS Status;
 
     switch (LOBYTE(PortMessage->u2.s2.Type)) {
+    case LPC_REQUEST:
+        Status = OnAlpcRequest(ConnectionPortHandle, PortMessage, MessageAttributes);
+        break;
     case LPC_DATAGRAM:
         Status = OnAlpcDatagram(ConnectionPortHandle, PortMessage, MessageAttributes);
         break;

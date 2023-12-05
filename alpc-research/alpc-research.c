@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 
     if (FALSE != NT_SUCCESS(Status)) {
         CliTestDatagram(L"\\ArCommendPort");
+        CliTestSyncRequest(L"\\ArCommendPort");
     }
     else {
         printf("SrvInitializeChannel Failed:%08x\n", Status);
