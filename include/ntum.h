@@ -1,15 +1,11 @@
-#ifndef _DEFINITIONS_H_
-#define _DEFINITIONS_H_
+#ifndef _NTUM_H_
+#define _NTUM_H_
 #define PHNT_VERSION PHNT_THRESHOLD
 #include <phnt_windows.h>
 #include <phnt.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+EXTERN_C_START
 
-#ifdef __cplusplus
-}
-#endif
+EXTERN_C_END
 
 #endif

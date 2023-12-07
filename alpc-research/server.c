@@ -12,7 +12,7 @@ SrvInitializePortAttributes (
 {
     RtlZeroMemory(PortAttributes, sizeof(ALPC_PORT_ATTRIBUTES));
 
-    PortAttributes->MaxMessageLength = ALPC_MAX_MESSAGE_LENGTH;
+    PortAttributes->MaxMessageLength = AlpcMaxAllowedMessageLength();
 }
 
 VOID NTAPI
@@ -241,7 +241,7 @@ SrvServerWorker (
         return Status;
     }
 
-    PortMessage = RtAllocateZeroHeap(ALPC_MAX_MESSAGE_LENGTH);
+    PortMessage = RtAllocateZeroHeap(AlpcMaxAllowedMessageLength());
 
     if (NULL == PortMessage) {
         RtFreeHeap(MessageAttributes);
@@ -249,7 +249,7 @@ SrvServerWorker (
     }
 
     while (TRUE) {
-        BufferLength = ALPC_MAX_MESSAGE_LENGTH;
+        BufferLength = AlpcMaxAllowedMessageLength();
 
         Status = NtAlpcSendWaitReceivePort(ConnectionPortHandle,
                                            0,

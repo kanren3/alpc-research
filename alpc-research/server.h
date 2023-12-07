@@ -3,8 +3,6 @@
 
 EXTERN_C_START
 
-#define ALPC_MAX_MESSAGE_LENGTH   MAXUINT16
-
 typedef struct _PORT_CONTEXT {
     CLIENT_ID ClientId;
     HANDLE CommunicationPortHandle;

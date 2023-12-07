@@ -10,7 +10,7 @@ CliInitializePortAttributes (
 {
     RtlZeroMemory(PortAttributes, sizeof(ALPC_PORT_ATTRIBUTES));
 
-    PortAttributes->MaxMessageLength = ALPC_MAX_MESSAGE_LENGTH;
+    PortAttributes->MaxMessageLength = AlpcMaxAllowedMessageLength();
 }
 
 VOID NTAPI
@@ -54,7 +54,7 @@ CliTestDatagram (
     DelayInterval.QuadPart = Int32x32To64(1000, -10 * 1000);
     NtDelayExecution(FALSE, &DelayInterval);
 
-    PortMessage = RtAllocateZeroHeap(ALPC_MAX_MESSAGE_LENGTH);
+    PortMessage = RtAllocateZeroHeap(AlpcMaxAllowedMessageLength());
 
     if (NULL == PortMessage) {
         return STATUS_INSUFFICIENT_RESOURCES;
@@ -65,7 +65,7 @@ CliTestDatagram (
     CliInitializePortAttributes(&PortAttributes);
     CliInitializePortMessage(PortMessage, NULL, 0);
 
-    BufferLength = ALPC_MAX_MESSAGE_LENGTH;
+    BufferLength = AlpcMaxAllowedMessageLength();
 
     Status = NtAlpcConnectPort(&CommunicationPortHandle,
                                &PortNameString,
@@ -125,7 +125,7 @@ CliTestSyncRequest (
     DelayInterval.QuadPart = Int32x32To64(1000, -10 * 1000);
     NtDelayExecution(FALSE, &DelayInterval);
 
-    PortMessage = RtAllocateZeroHeap(ALPC_MAX_MESSAGE_LENGTH);
+    PortMessage = RtAllocateZeroHeap(AlpcMaxAllowedMessageLength());
 
     if (NULL == PortMessage) {
         return STATUS_INSUFFICIENT_RESOURCES;
@@ -136,7 +136,7 @@ CliTestSyncRequest (
     CliInitializePortAttributes(&PortAttributes);
     CliInitializePortMessage(PortMessage, NULL, 0);
 
-    BufferLength = ALPC_MAX_MESSAGE_LENGTH;
+    BufferLength = AlpcMaxAllowedMessageLength();
 
     Status = NtAlpcConnectPort(&CommunicationPortHandle,
                                &PortNameString,
@@ -158,7 +158,7 @@ CliTestSyncRequest (
     while (Counter.QuadPart < 10000000) {
         CliInitializePortMessage(PortMessage, &Counter, sizeof(Counter));
 
-        BufferLength = ALPC_MAX_MESSAGE_LENGTH;
+        BufferLength = AlpcMaxAllowedMessageLength();
 
         Status = NtAlpcSendWaitReceivePort(CommunicationPortHandle,
                                            ALPC_MSGFLG_SYNC_REQUEST,
