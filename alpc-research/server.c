@@ -183,6 +183,10 @@ SrvProcessMessage (
 )
 {
     NTSTATUS Status;
+    PALPC_CONTEXT_ATTR ContextAttribute;
+
+    ContextAttribute = AlpcGetMessageAttribute(MessageAttributes,
+                                               ALPC_MESSAGE_CONTEXT_ATTRIBUTE);
 
     switch (LOBYTE(PortMessage->u2.s2.Type)) {
     case LPC_REQUEST:
@@ -190,6 +194,11 @@ SrvProcessMessage (
         break;
     case LPC_DATAGRAM:
         Status = OnAlpcDatagram(ConnectionPortHandle, PortMessage, MessageAttributes);
+
+        if (0 != (PortMessage->u2.s2.Type & LPC_CONTINUATION_REQUIRED)) {
+            NtAlpcCancelMessage(ConnectionPortHandle, 0, ContextAttribute);
+        }
+
         break;
     case LPC_PORT_CLOSED:
         Status = OnAlpcDisconnection(ConnectionPortHandle, PortMessage, MessageAttributes);

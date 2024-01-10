@@ -84,7 +84,7 @@ CliTestDatagram (
         return Status;
     }
 
-    while (Counter.QuadPart < 10000000) {
+    while (Counter.QuadPart < 1000000) {
         CliInitializePortMessage(PortMessage, &Counter, sizeof(Counter));
  
         Status = NtAlpcSendWaitReceivePort(CommunicationPortHandle,
@@ -99,8 +99,8 @@ CliTestDatagram (
         Counter.QuadPart += 1;
     }
 
-    DelayInterval.QuadPart = Int32x32To64(15000, -10 * 1000);
-    NtDelayExecution(FALSE, &DelayInterval);
+//    DelayInterval.QuadPart = Int32x32To64(15000, -10 * 1000);
+//    NtDelayExecution(FALSE, &DelayInterval);
 
     NtClose(CommunicationPortHandle);
     RtFreeHeap(PortMessage);
@@ -155,7 +155,7 @@ CliTestSyncRequest (
         return Status;
     }
 
-    while (Counter.QuadPart < 10000000) {
+    while (Counter.QuadPart < 1000000) {
         CliInitializePortMessage(PortMessage, &Counter, sizeof(Counter));
 
         BufferLength = AlpcMaxAllowedMessageLength();
