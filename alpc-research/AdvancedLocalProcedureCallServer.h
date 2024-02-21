@@ -74,8 +74,8 @@ PCLIENT_OBJECT
 NTAPI
 SrvConnectServer (
     IN LPCWSTR PortName,
-    IN PVOID DataBuffer OPTIONAL,
-    IN SHORT DataLength
+    IN PVOID ConnectionDataBuffer OPTIONAL,
+    IN SHORT ConnectionDataLength
 );
 
 EXTERN_C_END
