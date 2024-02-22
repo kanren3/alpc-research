@@ -19,20 +19,18 @@ SrvAlpcRequest (
     IN PSERVER_OBJECT ServerObject
 )
 {
-    NTSTATUS Status;
-
     ServerObject->OnRequest(ServerObject->PortMessage);
 
-    Status = NtAlpcSendWaitReceivePort(ServerObject->ConnectionPortHandle,
-                                       ALPC_MSGFLG_RELEASE_MESSAGE,
-                                       ServerObject->PortMessage,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL);
+    NtAlpcSendWaitReceivePort(ServerObject->ConnectionPortHandle,
+                              ALPC_MSGFLG_RELEASE_MESSAGE,
+                              ServerObject->PortMessage,
+                              NULL,
+                              NULL,
+                              NULL,
+                              NULL,
+                              NULL);
 
-    return Status;
+    return STATUS_SUCCESS;
 }
 
 NTSTATUS
@@ -119,44 +117,44 @@ SrvAlpcConnect (
                                              TRUE);
 
             if (FALSE == NT_SUCCESS (Status)) {
-                Status = NtAlpcAcceptConnectPort(&CommunicationPortHandle,
-                                                 ServerObject->ConnectionPortHandle,
-                                                 0,
-                                                 &ObjectAttributes,
-                                                 &ServerObject->PortAttributes,
-                                                 NULL,
-                                                 ServerObject->PortMessage,
-                                                 NULL,
-                                                 FALSE);
+                NtAlpcAcceptConnectPort(&CommunicationPortHandle,
+                                        ServerObject->ConnectionPortHandle,
+                                        0,
+                                        &ObjectAttributes,
+                                        &ServerObject->PortAttributes,
+                                        NULL,
+                                        ServerObject->PortMessage,
+                                        NULL,
+                                        FALSE);
 
                 RtFreeHeap(PortContext);
             }
         }
         else {
-            Status = NtAlpcAcceptConnectPort(&CommunicationPortHandle,
-                                             ServerObject->ConnectionPortHandle,
-                                             0,
-                                             &ObjectAttributes,
-                                             &ServerObject->PortAttributes,
-                                             NULL,
-                                             ServerObject->PortMessage,
-                                             NULL,
-                                             FALSE);
+            NtAlpcAcceptConnectPort(&CommunicationPortHandle,
+                                    ServerObject->ConnectionPortHandle,
+                                    0,
+                                    &ObjectAttributes,
+                                    &ServerObject->PortAttributes,
+                                    NULL,
+                                    ServerObject->PortMessage,
+                                    NULL,
+                                    FALSE);
         }
     }
     else {
-        Status = NtAlpcAcceptConnectPort(&CommunicationPortHandle,
-                                         ServerObject->ConnectionPortHandle,
-                                         0,
-                                         &ObjectAttributes,
-                                         &ServerObject->PortAttributes,
-                                         NULL,
-                                         ServerObject->PortMessage,
-                                         NULL,
-                                         FALSE);
+        NtAlpcAcceptConnectPort(&CommunicationPortHandle,
+                                ServerObject->ConnectionPortHandle,
+                                0,
+                                &ObjectAttributes,
+                                &ServerObject->PortAttributes,
+                                NULL,
+                                ServerObject->PortMessage,
+                                NULL,
+                                FALSE);
     }
 
-    return Status;
+    return STATUS_SUCCESS;
 }
 
 NTSTATUS
