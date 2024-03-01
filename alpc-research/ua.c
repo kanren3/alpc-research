@@ -1,4 +1,4 @@
-﻿#include <ntstatus.h>
+#include <ntstatus.h>
 #define WIN32_NO_STATUS
 #include <windows.h>
 #include <winternl.h>
@@ -44,7 +44,7 @@ UaInitializePortAttributes (
 NTSTATUS
 NTAPI
 UaAlpcRequest (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     Server->OnRequest(Server->PortMessage);
@@ -64,7 +64,7 @@ UaAlpcRequest (
 NTSTATUS
 NTAPI
 UaAlpcDatagram (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     PALPC_CONTEXT_ATTR ContextAttribute;
@@ -88,7 +88,7 @@ UaAlpcDatagram (
 NTSTATUS
 NTAPI
 UaAlpcDisconnect (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     NTSTATUS Status;
@@ -114,7 +114,7 @@ UaAlpcDisconnect (
 NTSTATUS
 NTAPI
 UaAlpcConnect (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     NTSTATUS Status;
@@ -188,7 +188,7 @@ UaAlpcConnect (
 NTSTATUS
 NTAPI
 UaProcessMessage (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     NTSTATUS Status;
@@ -220,7 +220,7 @@ UaProcessMessage (
 DWORD
 WINAPI
 UaServerWorker (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     NTSTATUS Status;
@@ -255,7 +255,7 @@ UaServerWorker (
 VOID
 NTAPI
 UaTerminateServer (
-    IN PKA_SERVER Server
+    IN PUA_SERVER Server
 )
 {
     NtClose(Server->ConnectionPortHandle);
@@ -266,7 +266,7 @@ UaTerminateServer (
     UaFreeHeap(Server);
 }
 
-PKA_SERVER
+PUA_SERVER
 NTAPI
 UaCreateServer (
     IN LPCWSTR PortName,
@@ -276,13 +276,13 @@ UaCreateServer (
 )
 {
     NTSTATUS Status;
-    PKA_SERVER Server;
+    PUA_SERVER Server;
     ULONG MessageAttributesMask;
     SIZE_T MessageAttributesSize;
     SIZE_T RequiredBufferSize;
     OBJECT_ATTRIBUTES ObjectAttributes;
 
-    Server = UaAllocateZeroHeap(sizeof(KA_SERVER));
+    Server = UaAllocateZeroHeap(sizeof(UA_SERVER));
 
     if (NULL == Server) {
         goto Cleanup;

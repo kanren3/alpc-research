@@ -1,4 +1,4 @@
-﻿#ifndef _UA_H_
+#ifndef _UA_H_
 #define _UA_H_
 
 EXTERN_C_START
@@ -305,7 +305,7 @@ BOOLEAN
     IN PPORT_MESSAGE PortMessage
     );
 
-typedef struct _KA_SERVER {
+typedef struct _UA_SERVER {
     UNICODE_STRING PortName;
     REQUEST_PROCEDURE OnRequest;
     DATAGRAM_PROCEDURE OnDatagram;
@@ -315,15 +315,15 @@ typedef struct _KA_SERVER {
     PALPC_MESSAGE_ATTRIBUTES MessageAttributes;
     HANDLE ConnectionPortHandle;
     HANDLE ServerThreadHandle;
-} KA_SERVER, *PKA_SERVER;
+} UA_SERVER, *PUA_SERVER;
 
 VOID
 NTAPI
 UaTerminateServer (
-    IN PKA_SERVER ServerObject
+    IN PUA_SERVER Server
 );
 
-PKA_SERVER
+PUA_SERVER
 NTAPI
 UaCreateServer (
     IN LPCWSTR PortName,
@@ -358,7 +358,7 @@ NTSTATUS
 NTAPI
 UaConnectServer (
     OUT PHANDLE CommunicationPortHandle,
-    IN LPCWSTR PortName,
+    IN LPCWSTR ServerPortName,
     IN PVOID ConnectionDataBuffer OPTIONAL,
     IN USHORT ConnectionDataLength
 );
